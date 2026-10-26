@@ -812,3 +812,359 @@ https://getbootstrap.com/
 **Bootswatch** — https://bootswatch.com/
 
 {{% /section %}}
+
+---
+
+{{% section %}}
+
+<img class="exclude" style="max-width: 128px;" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/JavaScript-logo.png/960px-JavaScript-logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20120221235433" />
+
+## **JS**
+### **J**ava**S**cript
+
+---
+
+### **J**ava**S**cript
+
+- Linguaggio interpretato*, debolmente tipizzato e **prototype-based**
+  - *compilato **JIT** (*Just-In Time*)
+  - concetto di prototipo di un oggetto
+    - istanza primaria, astratta, sempre accessibile che può essere clonata e modificata in un qualunque momento — *anche a run-time*!
+
+<br>
+<br>
+
+{{% callout type="success" %}}
+Unico **linguaggio di programmazione** tra i tre!
+{{% /callout%}}
+
+---
+
+### Dichiarazioni variabili
+
+3 possibilità:
+
+<br>
+
+{{% multicol %}}
+
+{{% col %}}
+#### LET
+
+`let person = /*..*/`
+{{% /col %}}
+{{% col %}}
+#### CONST
+`const person = /*..*/`
+
+Preferibile quando non si deve cambiare il valore ad una variabile.
+{{% /col %}}
+{{% col class="bg-danger rounded" %}}
+#### VAR
+Bandita!
+{{% /col %}}
+
+{{% /multicol %}}
+
+---
+
+### Tipizzazione dinamica e debole
+
+```js
+let today = new Date()
+today = "Monday"
+today = 4
+```
+
+Il tipo di dato viene dedotto in fase di esecuzione (*run-time*); nell'esempio:
+1. `today` parte con il tipo di `Date`
+2. passa a `String`
+3. diventa `Number`
+
+<br>
+<br>
+
+> Istruzioni lecite!
+
+---
+
+### I tipi di dato **primitivi**
+
+{{% multicol %}}
+{{% col %}}
+#### Numerici
+
+- `Number`
+  - raccoglie tutto: interi e con la virgola;
+    - anche il valore `NaN` (*Not a Number*)
+```js
+let myNumberFromConstructor = Number("5")
+let myDoubleNumber = 3.14
+let mySuspiciousNumber = Number("JavaScript")
+
+console.log(mySuspiciousNumber) // NaN
+console.log(typeof mySuspiciousNumber) // Number
+``` 
+
+- `BigInt`
+  - numeri non rappresentabili con `Number`
+    - troppo grandi (o troppo piccoli)
+  - no numeri con la virgola!
+  - unico limite: la memoria a disposizione
+
+```js
+let myBigInteger = BigInt("12345678901234567890")
+```
+{{% /col %}}
+{{% col %}}
+#### Non-numerici
+- `String`
+  - rappresentabili con le doppie virgolette "", o anche quelle singole ''
+
+```js
+let firstValidString = 'ciao a tutti!'
+let secondValidString = "questa è una stringa"
+let interpolated = `${firstValidString} ${secondValidString}`
+```
+
+<small>
+    Per l'interpolazione si usano i backtick!
+</small>
+
+<br>
+
+- `Boolean` $\rightarrow$ `true` | `false`
+- `Symbol`
+- `Undefined`
+- `Null`
+
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+{{% callout type="danger" title="Undefined vs Null" %}}
+È `undefined` tutto ciò che è stato dichiarato, ma che non ha valore; è `null` ciò che volutamente ha ricevuto valore `null`.
+{{% /callout %}}
+
+<br>
+
+{{% multicol %}}
+{{% col %}}
+```js
+let myName;
+console.log(myName) // undefined
+console.log(typeof myName) // undefined
+```
+{{% /col %}}
+{{% col %}}
+```js
+let myName = null;
+console.log(myName) // null
+console.log(typeof myName) // object
+```
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+### Gli **oggetti**
+
+{{% multicol %}}
+{{% col %}}
+
+#### Classe
+
+```js
+class Person {
+  
+  #firstName
+  #surname
+
+  constructor(name, surname) {
+    this.#firstName = name
+    this.#surname = surname
+  }
+
+  greetings() {
+    return `Hi! 
+      I am ${this.#firstName} 
+      ${this.#surname}`
+  }
+}
+
+// ---
+
+const pinco = new Person(
+  "Pinco", "Pallino"
+)
+console.log(pinco.greetings())
+```
+
+{{% /col %}}
+{{% col %}}
+
+#### Prototipo
+
+```js
+function Person(name, surname) {
+  this.firstName = name
+  this.surname = surname
+}
+
+const pinco = new Person(
+  "Pinco", "Pallino"
+)
+
+Person.prototype.greetings = function () {
+  return `Hi! 
+    I am ${this.firstName} 
+    ${this.surname}`
+}
+
+console.log(pinco.greetings())
+```
+
+{{% /col %}}
+{{% col %}}
+
+#### JSON Notation
+
+```js
+const pinco = {
+  firstName: "Pinco",
+  surname: "Pallino",
+  greetings: function() {
+    return `Hi! 
+      I am ${this.firstName} 
+      ${this.surname}`
+  }
+}
+
+console.log(pinco.greetings())
+```
+
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+### **Strutture dati**
+
+{{% multicol %}}
+{{% col %}}
+#### Liste / Array
+```js 
+const numbers = [1, 2, 3]
+// Stile fluente!
+const transformed = numbers
+    .map(n => n * 3) 
+    .filter(n => n % 2 === 0)
+    .every(n => n > 2)
+
+// 1. Create a list (Array)
+const fruits = ["apple", "banana", "orange"];
+
+// 2. Add elements
+fruits.push("mango");       // Appends to the end
+fruits.unshift("strawberry"); // Inserts at the beginning
+
+// 3. Access and update by index
+console.log(fruits[0]);     // Output: "strawberry"
+fruits[1] = "green apple";  // Updates the element at index 1
+
+// 4. Remove elements
+const lastItem = fruits.pop();   
+// Removes and returns the last element ("mango")
+const firstItem = fruits.shift(); 
+// Removes and returns the first element ("strawberry")
+
+// 5. Check existence
+// Output: true
+console.log(fruits.includes("banana")); 
+
+// 6. Iterate through elements
+fruits.forEach((fruit, index) => {
+  console.log(`${index}: ${fruit}`);
+});
+```
+{{% /col %}}
+{{% col %}}
+#### Mappe
+```js 
+const map = new Map();
+
+map.set("a", 1);
+map.set("b", 2);
+map.set("c", 3);
+
+console.log(map.get("a"));
+// Expected output: 1
+
+map.set("a", 97);
+
+console.log(map.get("a"));
+// Expected output: 97
+
+console.log(map.size);
+// Expected output: 3
+
+map.delete("b");
+
+console.log(map.size);
+// Expected output: 2
+```
+{{% /col %}}
+
+{{% col %}}
+#### Set
+
+```js
+
+// 1. Create an empty Set
+const numbers = new Set();
+
+// 2. Add elements using .add()
+numbers.add(10);
+numbers.add(20);
+// Duplicate value: ignored automatically
+numbers.add(10); 
+console.log(numbers.size); // Output: 2
+
+// 3. Check for existence using .has() 
+console.log(numbers.has(20)); // Output: true
+console.log(numbers.has(99)); // Output: false
+
+// 4. Remove an element using .delete()
+numbers.delete(10);
+
+// --- COMMON USE CASE: 
+// Removing duplicates from an array ---
+const itemsWithDuplicates = [
+  "apple", "pear", 
+  "apple", "banana"];
+
+// Pass the array to the Set constructor, 
+// then spread it back into an array
+const uniqueItems = [
+  ...new Set(itemsWithDuplicates)
+];
+
+console.log(uniqueItems); 
+// Output: ["apple", "pear", "banana"]
+```
+{{% /col %}}
+{{% /multicol %}}
+
+{{% /section %}}
+
+---
+
+{{% section %}}
+
+<img class="exclude" style="max-width: 128px;" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F4%2F4c%2FTypescript_logo_2020.svg%2F1280px-Typescript_logo_2020.svg.png%3F_%3D20221110153201&f=1&nofb=1&ipt=08cec9d878c8b1f1d83073ea26221d4513bd6b711bcedccac791aefc9c9ad50a&ipo=images" />
+
+## **TS**
+### **T**ype**S**cript
+
+{{% /section %}}
