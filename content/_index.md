@@ -1167,4 +1167,399 @@ console.log(uniqueItems);
 ## **TS**
 ### **T**ype**S**cript
 
+---
+
+### I **problemi** di **JavaScript**
+
+- Tipizzazione **debole** e **dinamica**
+  - molti errori vengono scoperti solo a *run-time* (programma in esecuzione)
+- Comportamenti **imprevedibili**
+  - `[] + {}` $\rightarrow\ ?$
+  - `"5" - 1` $\rightarrow\ ?$
+- Difficoltà di **refactoring**
+  - progetti medio/grandi difficilmente manutenibili e scalabili
+- Mancanza di autocompletamento
+  - assenza di **IntelliSense**
+
+---
+
+### **Perché** **T**ype**S**cript / 1
+
+{{% multicol %}}
+{{% col %}}
+- **Superset tipizzato di JavaScript**, open-source e sviluppato da Microsoft
+  - stesso progettista di C#!
+- **"Superset"**
+  - il codice JavaScript rimane *valido* in TypeScript
+- **Compatibilità** con i browser/JS runtime (Node, Bun, Deno...)
+  - il codice TypeScript deve essere convertito in codice JavaScript
+  - particolare compilatore chiamato "**transpiler**"
+    - sottile differenza dal concetto tradizionale di compilatore
+- **Zero overhead**
+  - la tipizzazione è presente solo a **compile-time**
+  - una volta "traspilato", **i tipi spariscono completamente** 
+{{% /col %}}
+{{% col class="d-flex justify-content-center" %}}
+<img src="imgs/superset.png">
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+### **Perché** **T**ype**S**cript / 2
+
+{{% multicol %}}
+
+{{% col %}}
+#### Rilevamento errori <br> a **compile-time**
+
+Gli errori vengono segnalati ancor prima di avviare il programma.
+{{% /col %}}
+{{% col %}}
+#### Developer experience
+IntelliSense, documentazione inline delle funzioni, navigazione rapida del codice.
+{{% /col %}}
+{{% col %}}
+#### Refactoring e manutenibilità
+I tipi fungono da documentazione aggiornata, bassa probabilità di rompere codice con manovre di refactoring.
+{{% /col %}}
+
+{{% /multicol %}}
+
+---
+
+### I tipi base
+
+{{% multicol %}}
+{{% col %}}
+- Tipi primitivi: 
+  - `string`, 
+  - `number`, 
+  - `boolean`, 
+  - `null`, 
+  - `undefined`
+{{% /col %}}
+{{% col %}}
+- Array e tuple: `T[]`, `[T, U]`
+  - per esempio: 
+    - `number[]`, 
+    - `[number, string]`
+{{% /col %}}
+{{% col %}}
+#### Type inference
+TS capisce il tipo di dato e lo inferisce ad una variabile, senza bisogno di annotarlo
+
+```ts
+let messaggio: string = "Ciao Mondo";
+
+// TS deduce automaticamente 'number'
+let count = 42; 
+
+// TS capisce che si tratta di 'number[]'
+let numbers = [1, 2, 3, 4, 5] 
+```
+{{% /col %}}
+
+{{% /multicol %}}
+
+---
+
+### **Type** vs **Interface**
+
+{{% multicol %}}
+{{% col %}}
+#### **Interface**
+- Costrutto ideale per modellare oggetti, 
+- Estendibile con `extends`
+- Adatta per architetture ad oggetti e API pubbliche
+{{% /col %}}
+{{% col %}}
+#### **Type**
+- Costrutto versatile
+- Supporto alle operazioni **insiemistiche tra tipi**
+{{% /col %}}
+{{% /multicol %}}
+
+--- 
+
+### Qualche esempio di `type` / 1
+
+#### Union (`|`) e Intersection (`&`)
+
+```ts
+// Union (OR): one of those possible values
+type RequestStatus = "idle" | "loading" | "success" | "error";
+
+// ---
+
+type Timestamped = {
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type Product = {
+  id: string;
+  title: string;
+  price: number;
+};
+
+// Intersection (AND): combines all properties from both types
+type TrackedProduct = Product & Timestamped;
+
+const item: TrackedProduct = {
+  id: "prod-101",
+  title: "Mechanical Keyboard",
+  price: 89.99,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+```
+
+---
+
+### Qualche esempio di `type` / 2
+
+```ts
+type Action =
+  | { type: "LOGIN"; payload: { userId: string } }
+  | { type: "LOGOUT" }
+  | { type: "UPDATE_EMAIL"; payload: { newEmail: string } };
+
+function handleAction(action: Action) {
+  switch (action.type) {
+    case "LOGIN":
+      // TypeScript automatically narrows the type: payload and userId are guaranteed
+      console.log("Logged in user:", action.payload.userId);
+      break;
+    case "LOGOUT":
+      // payload does not exist on this branch
+      console.log("User logged out");
+      break;
+    case "UPDATE_EMAIL":
+      console.log("New email:", action.payload.newEmail);
+      break;
+  }
+}
+```
+
+---
+
+### Qualche esempio di `type` / 3
+
+```ts
+type AppConfig = {
+  port: number;
+  host: string;
+  debugMode: boolean;
+};
+
+// Extracted union: "port" | "host" | "debugMode"
+type ConfigKey = keyof AppConfig;
+
+// Lookup type: resolves to number
+type PortType = AppConfig["port"];
+
+function getConfigValue(config: AppConfig, key: ConfigKey) {
+  return config[key];
+}
+```
+
+---
+
+### Qualche esempio di `type` / 4
+
+#### Built-in types: `Partial<>`, `Pick<>`, `Omit<>`, `Record<>` 
+
+```ts
+type User = {
+  id: number;
+  username: string;
+  email: string;
+  passwordHash: string;
+};
+
+// 1. Partial: marks every field as optional (ideal for PATCH payloads)
+type UpdateUserDto = Partial<User>;
+
+// 2. Pick: selects only the specified keys
+type PublicProfile = Pick<User, "id" | "username">;
+
+// 3. Omit: excludes specific sensitive keys
+type SafeUser = Omit<User, "passwordHash">;
+
+// 4. Record: constructs an object type with specific keys and values
+type Permission = "read" | "write" | "admin";
+type RolePermissions = Record<Permission, boolean>;
+
+const guestPermissions: RolePermissions = {
+  read: true,
+  write: false,
+  admin: false,
+};
+```
+
+---
+
+### Qualche esempio di `interface` / 1
+
+#### **Ereditarietà** su **più livelli**
+
+```ts
+interface BaseEntity {
+  id: string;
+  createdAt: Date;
+}
+
+// Single extension: Person inherits id and createdAt
+interface Person extends BaseEntity {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+// Chained extension: Employee inherits from Person (and transitively from BaseEntity)
+interface Employee extends Person {
+  salary: number;
+  role: "junior" | "mid" | "senior";
+  hiredAt: Date;
+}
+
+const developer: Employee = {
+  id: "emp-42",
+  createdAt: new Date("2024-01-01"),
+  firstName: "Jane",
+  lastName: "Doe",
+  email: "jane.doe@example.com",
+  salary: 85000,
+  role: "senior",
+  hiredAt: new Date("2024-03-01"),
+};
+```
+
+---
+
+### Qualche esempio di `interface` / 2
+
+#### **Composizione** di interfacce
+
+```ts
+interface Sizable {
+  width: number;
+  height: number;
+}
+
+interface Stylable {
+  backgroundColor: string;
+  borderColor?: string;
+}
+
+interface Clickable {
+  onClick: (event: MouseEvent) => void;
+}
+
+// Composes three distinct behaviors into a single UI contract
+interface ButtonProps extends Sizable, Stylable, Clickable {
+  label: string;
+  disabled: boolean;
+}
+
+const submitButton: ButtonProps = {
+  width: 140,
+  height: 44,
+  backgroundColor: "#0070f3",
+  label: "Submit Form",
+  disabled: false,
+  onClick: (e) => console.log("Clicked at coordinates:", e.clientX, e.clientY),
+};
+```
+
+---
+
+### Qualche esempio di `interface` / 3
+
+#### **Restringimento** / **sovrascrittura** delle proprietà
+
+```ts
+interface GenericItem {
+  id: string | number;
+  payload: unknown;
+}
+
+// Narrows 'id' strictly to string and provides a concrete shape for 'payload'
+interface ArticleItem extends GenericItem {
+  id: string;
+  payload: {
+    title: string;
+    tags: string[];
+  };
+}
+```
+
+---
+
+### Funzioni tipizzate
+
+```ts
+function calcolaTotale(prezzo: number, sconto: number = 0): number {
+  return prezzo - sconto;
+}
+```
+
+---
+
+### **Installazione** di TypeScript
+
+1) Assicurarsi di avere NodeJS installato 
+  > in un terminale, digitare `node --version` <br>
+  > (output atteso: una versione di node, tipo `v24.13.1`)
+2) All'interno di un progetto, sempre da terminale, scrivere
+  > `npm install -D typescript` <br>
+  > (`-D`: salva come dipendenza del progetto - equivale a `--save-dev`)
+3) Per compilare un file `.ts`: 
+  > `npx tsc app.ts`
+
+---
+
+{{% multicol %}}
+{{% col %}}
+### **NodeJS**
+#### Il file `package.json`
+
+Identità del progetto, indicazione delle dipendenze necessarie, script eseguibili (`npm run dev`, `npm test`...)
+
+{{% callout %}}
+"Lista dei desideri, astratta e flessibile".
+{{% /callout %}}
+
+{{% /col %}}
+
+{{% col %}}
+### **NodeJS**
+#### Il file `package-lock.json`
+
+Dipendenze con versioni precise, URL di download, hash crittografico per certificare l'autenticità del file.
+
+{{% callout %}}
+"Fotografia del progetto, fissata e deterministica".
+{{% /callout %}}
+{{% /col %}}
+
+{{% col %}}
+### **TS**-Only
+#### Il file `.tsconfig`
+
+Cuore di ogni progetto TypeScript - configurazioni della logica del transpiler.
+
+{{% callout %}}
+Parametri importanti:
+1) `target`: versioni del JS in output;
+2) `strict: true`: abilita controlli rigorosi
+3) `moduleResolution`: gestisce import/export
+4) `noImplicitAny`: impedisce `any` impliciti
+{{% /callout %}}
+
+
+{{% /col %}}
+{{% /multicol %}}
+
 {{% /section %}}
