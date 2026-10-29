@@ -1057,6 +1057,375 @@ Bootstrap is used by 14.4% of all the websites, that is a CSS framework market s
 <img class="exclude" style="max-width: 128px;" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F4%2F4c%2FTypescript_logo_2020.svg%2F1280px-Typescript_logo_2020.svg.png%3F_%3D20221110153201&amp;f=1&amp;nofb=1&amp;ipt=08cec9d878c8b1f1d83073ea26221d4513bd6b711bcedccac791aefc9c9ad50a&amp;ipo=images">
 <h2 id="ts"><strong>TS</strong></h2>
 <h3 id="typescript"><strong>T</strong>ype<strong>S</strong>cript</h3>
+</section><section>
+<h3 id="i-problemi-di-javascript">I <strong>problemi</strong> di <strong>JavaScript</strong></h3>
+<ul>
+<li>Tipizzazione <strong>debole</strong> e <strong>dinamica</strong>
+<ul>
+<li>molti errori vengono scoperti solo a <em>run-time</em> (programma in esecuzione)</li>
+</ul>
+</li>
+<li>Comportamenti <strong>imprevedibili</strong>
+<ul>
+<li><code>[] + {}</code> $\rightarrow\ ?$</li>
+<li><code>"5" - 1</code> $\rightarrow\ ?$</li>
+</ul>
+</li>
+<li>Difficoltà di <strong>refactoring</strong>
+<ul>
+<li>progetti medio/grandi difficilmente manutenibili e scalabili</li>
+</ul>
+</li>
+<li>Mancanza di autocompletamento
+<ul>
+<li>assenza di <strong>IntelliSense</strong></li>
+</ul>
+</li>
+</ul>
+</section><section>
+<h3 id="perché-typescript--1"><strong>Perché</strong> <strong>T</strong>ype<strong>S</strong>cript / 1</h3>
+<div class="container-fluid m-0 p-0">
+    <div class="row "><div class="col "><ul>
+<li><strong>Superset tipizzato di JavaScript</strong>, open-source e sviluppato da Microsoft
+<ul>
+<li>stesso progettista di C#!</li>
+</ul>
+</li>
+<li><strong>“Superset”</strong>
+<ul>
+<li>il codice JavaScript rimane <em>valido</em> in TypeScript</li>
+</ul>
+</li>
+<li><strong>Compatibilità</strong> con i browser/JS runtime (Node, Bun, Deno…)
+<ul>
+<li>il codice TypeScript deve essere convertito in codice JavaScript</li>
+<li>particolare compilatore chiamato “<strong>transpiler</strong>”
+<ul>
+<li>sottile differenza dal concetto tradizionale di compilatore</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Zero overhead</strong>
+<ul>
+<li>la tipizzazione è presente solo a <strong>compile-time</strong></li>
+<li>una volta “traspilato”, <strong>i tipi spariscono completamente</strong></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="col d-flex justify-content-center"><img src="imgs/superset.png">
+</div>
+</div>
+</div>
+</section><section>
+<h3 id="perché-typescript--2"><strong>Perché</strong> <strong>T</strong>ype<strong>S</strong>cript / 2</h3>
+<div class="container-fluid m-0 p-0">
+    <div class="row "><div class="col "><h4 id="rilevamento-errori--a-compile-time">Rilevamento errori <br> a <strong>compile-time</strong></h4>
+<p>Gli errori vengono segnalati ancor prima di avviare il programma.</p>
+</div>
+<div class="col "><h4 id="developer-experience">Developer experience</h4>
+<p>IntelliSense, documentazione inline delle funzioni, navigazione rapida del codice.</p>
+</div>
+<div class="col "><h4 id="refactoring-e-manutenibilità">Refactoring e manutenibilità</h4>
+<p>I tipi fungono da documentazione aggiornata, bassa probabilità di rompere codice con manovre di refactoring.</p>
+</div>
+</div>
+</div>
+</section><section>
+<h3 id="i-tipi-base">I tipi base</h3>
+<div class="container-fluid m-0 p-0">
+    <div class="row "><div class="col "><ul>
+<li>Tipi primitivi:
+<ul>
+<li><code>string</code>,</li>
+<li><code>number</code>,</li>
+<li><code>boolean</code>,</li>
+<li><code>null</code>,</li>
+<li><code>undefined</code></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="col "><ul>
+<li>Array e tuple: <code>T[]</code>, <code>[T, U]</code>
+<ul>
+<li>per esempio:
+<ul>
+<li><code>number[]</code>,</li>
+<li><code>[number, string]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="col "><h4 id="type-inference">Type inference</h4>
+<p>TS capisce il tipo di dato e lo inferisce ad una variabile, senza bisogno di annotarlo</p>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff5c57">let</span> messaggio: <span style="color:#9aedfe">string</span> <span style="color:#ff6ac1">=</span> <span style="color:#5af78e">"Ciao Mondo"</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// TS deduce automaticamente 'number'
+</span></span></span><span style="display:flex;"><span><span style="color:#ff5c57">let</span> count <span style="color:#ff6ac1">=</span> <span style="color:#ff9f43">42</span>; 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// TS capisce che si tratta di 'number[]'
+</span></span></span><span style="display:flex;"><span><span style="color:#ff5c57">let</span> numbers <span style="color:#ff6ac1">=</span> [<span style="color:#ff9f43">1</span>, <span style="color:#ff9f43">2</span>, <span style="color:#ff9f43">3</span>, <span style="color:#ff9f43">4</span>, <span style="color:#ff9f43">5</span>] 
+</span></span></code></pre></div></div>
+</div>
+</div>
+</section><section>
+<h3 id="type-vs-interface"><strong>Type</strong> vs <strong>Interface</strong></h3>
+<div class="container-fluid m-0 p-0">
+    <div class="row "><div class="col "><h4 id="interface"><strong>Interface</strong></h4>
+<ul>
+<li>Costrutto ideale per modellare oggetti,</li>
+<li>Estendibile con <code>extends</code></li>
+<li>Adatta per architetture ad oggetti e API pubbliche</li>
+</ul>
+</div>
+<div class="col "><h4 id="type"><strong>Type</strong></h4>
+<ul>
+<li>Costrutto versatile</li>
+<li>Supporto alle operazioni <strong>insiemistiche tra tipi</strong></li>
+</ul>
+</div>
+</div>
+</div>
+</section><section>
+<h3 id="qualche-esempio-di-type--1">Qualche esempio di <code>type</code> / 1</h3>
+<h4 id="union--e-intersection-">Union (<code>|</code>) e Intersection (<code>&amp;</code>)</h4>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#78787e">// Union (OR): one of those possible values
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> RequestStatus <span style="color:#ff6ac1">=</span> <span style="color:#5af78e">"idle"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"loading"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"success"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"error"</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// ---
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> Timestamped <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  createdAt: <span style="color:#9aedfe">Date</span>;
+</span></span><span style="display:flex;"><span>  updatedAt: <span style="color:#9aedfe">Date</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> Product <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  title: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  price: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Intersection (AND): combines all properties from both types
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> TrackedProduct <span style="color:#ff6ac1">=</span> Product <span style="color:#ff6ac1">&amp;</span> Timestamped;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">const</span> item: <span style="color:#9aedfe">TrackedProduct</span> <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  id<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"prod-101"</span>,
+</span></span><span style="display:flex;"><span>  title<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"Mechanical Keyboard"</span>,
+</span></span><span style="display:flex;"><span>  price: <span style="color:#9aedfe">89.99</span>,
+</span></span><span style="display:flex;"><span>  createdAt: <span style="color:#9aedfe">new</span> <span style="color:#ff5c57">Date</span>(),
+</span></span><span style="display:flex;"><span>  updatedAt: <span style="color:#9aedfe">new</span> <span style="color:#ff5c57">Date</span>(),
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-type--2">Qualche esempio di <code>type</code> / 2</h3>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> Action <span style="color:#ff6ac1">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">|</span> { <span style="color:#ff6ac1">type</span><span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"LOGIN"</span>; payload<span style="color:#ff6ac1">:</span> { userId: <span style="color:#9aedfe">string</span> } }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">|</span> { <span style="color:#ff6ac1">type</span><span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"LOGOUT"</span> }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">|</span> { <span style="color:#ff6ac1">type</span><span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"UPDATE_EMAIL"</span>; payload<span style="color:#ff6ac1">:</span> { newEmail: <span style="color:#9aedfe">string</span> } };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff5c57">function</span> handleAction(action: <span style="color:#9aedfe">Action</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">switch</span> (action.<span style="color:#ff6ac1">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff6ac1">case</span> <span style="color:#5af78e">"LOGIN"</span><span style="color:#ff6ac1">:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#78787e">// TypeScript automatically narrows the type: payload and userId are guaranteed
+</span></span></span><span style="display:flex;"><span>      console.log(<span style="color:#5af78e">"Logged in user:"</span>, action.payload.userId);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff6ac1">break</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff6ac1">case</span> <span style="color:#5af78e">"LOGOUT"</span><span style="color:#ff6ac1">:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#78787e">// payload does not exist on this branch
+</span></span></span><span style="display:flex;"><span>      console.log(<span style="color:#5af78e">"User logged out"</span>);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff6ac1">break</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff6ac1">case</span> <span style="color:#5af78e">"UPDATE_EMAIL"</span><span style="color:#ff6ac1">:</span>
+</span></span><span style="display:flex;"><span>      console.log(<span style="color:#5af78e">"New email:"</span>, action.payload.newEmail);
+</span></span><span style="display:flex;"><span>      <span style="color:#ff6ac1">break</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-type--3">Qualche esempio di <code>type</code> / 3</h3>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> AppConfig <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  port: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>  host: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  debugMode: <span style="color:#9aedfe">boolean</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Extracted union: "port" | "host" | "debugMode"
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> ConfigKey <span style="color:#ff6ac1">=</span> <span style="color:#ff6ac1">keyof</span> AppConfig;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Lookup type: resolves to number
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> PortType <span style="color:#ff6ac1">=</span> AppConfig[<span style="color:#5af78e">"port"</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff5c57">function</span> getConfigValue(config: <span style="color:#9aedfe">AppConfig</span>, key: <span style="color:#9aedfe">ConfigKey</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">return</span> config[key];
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-type--4">Qualche esempio di <code>type</code> / 4</h3>
+<h4 id="built-in-types-partial-pick-omit-record">Built-in types: <code>Partial&lt;&gt;</code>, <code>Pick&lt;&gt;</code>, <code>Omit&lt;&gt;</code>, <code>Record&lt;&gt;</code></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> User <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>  username: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  email: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  passwordHash: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// 1. Partial: marks every field as optional (ideal for PATCH payloads)
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> UpdateUserDto <span style="color:#ff6ac1">=</span> Partial&lt;<span style="color:#ff6ac1">User</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// 2. Pick: selects only the specified keys
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> PublicProfile <span style="color:#ff6ac1">=</span> Pick&lt;<span style="color:#ff6ac1">User</span>, <span style="color:#5af78e">"id"</span> <span style="color:#ff5c57">|</span> <span style="color:#5af78e">"username"</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// 3. Omit: excludes specific sensitive keys
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> SafeUser <span style="color:#ff6ac1">=</span> Omit&lt;<span style="color:#ff6ac1">User</span>, <span style="color:#5af78e">"passwordHash"</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// 4. Record: constructs an object type with specific keys and values
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> Permission <span style="color:#ff6ac1">=</span> <span style="color:#5af78e">"read"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"write"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"admin"</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">type</span> RolePermissions <span style="color:#ff6ac1">=</span> Record&lt;<span style="color:#ff6ac1">Permission</span>, <span style="color:#57c7ff">boolean</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">const</span> guestPermissions: <span style="color:#9aedfe">RolePermissions</span> <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  read: <span style="color:#9aedfe">true</span>,
+</span></span><span style="display:flex;"><span>  write: <span style="color:#9aedfe">false</span>,
+</span></span><span style="display:flex;"><span>  admin: <span style="color:#9aedfe">false</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-interface--1">Qualche esempio di <code>interface</code> / 1</h3>
+<h4 id="ereditarietà-su-più-livelli"><strong>Ereditarietà</strong> su <strong>più livelli</strong></h4>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> BaseEntity {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  createdAt: <span style="color:#9aedfe">Date</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Single extension: Person inherits id and createdAt
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> Person <span style="color:#ff6ac1">extends</span> BaseEntity {
+</span></span><span style="display:flex;"><span>  firstName: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  lastName: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  email: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Chained extension: Employee inherits from Person (and transitively from BaseEntity)
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> Employee <span style="color:#ff6ac1">extends</span> Person {
+</span></span><span style="display:flex;"><span>  salary: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>  role<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"junior"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"mid"</span> <span style="color:#ff6ac1">|</span> <span style="color:#5af78e">"senior"</span>;
+</span></span><span style="display:flex;"><span>  hiredAt: <span style="color:#9aedfe">Date</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">const</span> developer: <span style="color:#9aedfe">Employee</span> <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  id<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"emp-42"</span>,
+</span></span><span style="display:flex;"><span>  createdAt: <span style="color:#9aedfe">new</span> <span style="color:#ff5c57">Date</span>(<span style="color:#5af78e">"2024-01-01"</span>),
+</span></span><span style="display:flex;"><span>  firstName<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"Jane"</span>,
+</span></span><span style="display:flex;"><span>  lastName<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"Doe"</span>,
+</span></span><span style="display:flex;"><span>  email<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"jane.doe@example.com"</span>,
+</span></span><span style="display:flex;"><span>  salary: <span style="color:#9aedfe">85000</span>,
+</span></span><span style="display:flex;"><span>  role<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"senior"</span>,
+</span></span><span style="display:flex;"><span>  hiredAt: <span style="color:#9aedfe">new</span> <span style="color:#ff5c57">Date</span>(<span style="color:#5af78e">"2024-03-01"</span>),
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-interface--2">Qualche esempio di <code>interface</code> / 2</h3>
+<h4 id="composizione-di-interfacce"><strong>Composizione</strong> di interfacce</h4>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> Sizable {
+</span></span><span style="display:flex;"><span>  width: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>  height: <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> Stylable {
+</span></span><span style="display:flex;"><span>  backgroundColor: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  borderColor?: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> Clickable {
+</span></span><span style="display:flex;"><span>  onClick<span style="color:#ff6ac1">:</span> (event: <span style="color:#9aedfe">MouseEvent</span>) <span style="color:#ff6ac1">=&gt;</span> <span style="color:#ff6ac1">void</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Composes three distinct behaviors into a single UI contract
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> ButtonProps <span style="color:#ff6ac1">extends</span> Sizable, Stylable, Clickable {
+</span></span><span style="display:flex;"><span>  label: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  disabled: <span style="color:#9aedfe">boolean</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff6ac1">const</span> submitButton: <span style="color:#9aedfe">ButtonProps</span> <span style="color:#ff6ac1">=</span> {
+</span></span><span style="display:flex;"><span>  width: <span style="color:#9aedfe">140</span>,
+</span></span><span style="display:flex;"><span>  height: <span style="color:#9aedfe">44</span>,
+</span></span><span style="display:flex;"><span>  backgroundColor<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"#0070f3"</span>,
+</span></span><span style="display:flex;"><span>  label<span style="color:#ff6ac1">:</span> <span style="color:#5af78e">"Submit Form"</span>,
+</span></span><span style="display:flex;"><span>  disabled: <span style="color:#9aedfe">false</span>,
+</span></span><span style="display:flex;"><span>  onClick<span style="color:#ff6ac1">:</span> (e) <span style="color:#ff6ac1">=&gt;</span> console.log(<span style="color:#5af78e">"Clicked at coordinates:"</span>, e.clientX, e.clientY),
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div></section><section>
+<h3 id="qualche-esempio-di-interface--3">Qualche esempio di <code>interface</code> / 3</h3>
+<h4 id="restringimento--sovrascrittura-delle-proprietà"><strong>Restringimento</strong> / <strong>sovrascrittura</strong> delle proprietà</h4>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> GenericItem {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#9aedfe">string</span> <span style="color:#ff6ac1">|</span> <span style="color:#9aedfe">number</span>;
+</span></span><span style="display:flex;"><span>  payload: <span style="color:#9aedfe">unknown</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#78787e">// Narrows 'id' strictly to string and provides a concrete shape for 'payload'
+</span></span></span><span style="display:flex;"><span><span style="color:#ff6ac1">interface</span> ArticleItem <span style="color:#ff6ac1">extends</span> GenericItem {
+</span></span><span style="display:flex;"><span>  id: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>  payload<span style="color:#ff6ac1">:</span> {
+</span></span><span style="display:flex;"><span>    title: <span style="color:#9aedfe">string</span>;
+</span></span><span style="display:flex;"><span>    tags: <span style="color:#9aedfe">string</span>[];
+</span></span><span style="display:flex;"><span>  };
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></section><section>
+<h3 id="funzioni-tipizzate">Funzioni tipizzate</h3>
+<div class="highlight"><pre tabindex="0" style="color:#e2e4e5;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="nohighlight" data-noescape=""><span style="display:flex;"><span><span style="color:#ff5c57">function</span> calcolaTotale(prezzo: <span style="color:#9aedfe">number</span>, sconto: <span style="color:#9aedfe">number</span> <span style="color:#ff6ac1">=</span> <span style="color:#ff9f43">0</span>)<span style="color:#ff6ac1">:</span> <span style="color:#9aedfe">number</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#ff6ac1">return</span> prezzo <span style="color:#ff6ac1">-</span> sconto;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></section><section>
+<h3 id="installazione-di-typescript"><strong>Installazione</strong> di TypeScript</h3>
+<ol>
+<li>Assicurarsi di avere NodeJS installato</li>
+</ol>
+<blockquote>
+<p>in un terminale, digitare <code>node --version</code> <br>
+(output atteso: una versione di node, tipo <code>v24.13.1</code>)</p>
+</blockquote>
+<ol start="2">
+<li>All’interno di un progetto, sempre da terminale, scrivere</li>
+</ol>
+<blockquote>
+<p><code>npm install -D typescript</code> <br>
+(<code>-D</code>: salva come dipendenza del progetto - equivale a <code>--save-dev</code>)</p>
+</blockquote>
+<ol start="3">
+<li>Per compilare un file <code>.ts</code>:</li>
+</ol>
+<blockquote>
+<p><code>npx tsc app.ts</code></p>
+</blockquote>
+</section><section>
+<div class="container-fluid m-0 p-0">
+    <div class="row "><div class="col "><h3 id="nodejs"><strong>NodeJS</strong></h3>
+<h4 id="il-file-packagejson">Il file <code>package.json</code></h4>
+<p>Identità del progetto, indicazione delle dipendenze necessarie, script eseguibili (<code>npm run dev</code>, <code>npm test</code>…)</p>
+<div class="callout note">
+    <div class="callout-background py-4 px-5"><div class="callout-content"><p>“Lista dei desideri, astratta e flessibile”.</p>
+</div></div>
+</div>
+</div>
+<div class="col "><h3 id="nodejs"><strong>NodeJS</strong></h3>
+<h4 id="il-file-package-lockjson">Il file <code>package-lock.json</code></h4>
+<p>Dipendenze con versioni precise, URL di download, hash crittografico per certificare l’autenticità del file.</p>
+<div class="callout note">
+    <div class="callout-background py-4 px-5"><div class="callout-content"><p>“Fotografia del progetto, fissata e deterministica”.</p>
+</div></div>
+</div>
+</div>
+<div class="col "><h3 id="ts-only"><strong>TS</strong>-Only</h3>
+<h4 id="il-file-tsconfig">Il file <code>.tsconfig</code></h4>
+<p>Cuore di ogni progetto TypeScript - configurazioni della logica del transpiler.</p>
+<div class="callout note">
+    <div class="callout-background py-4 px-5"><div class="callout-content"><p>Parametri importanti:</p>
+<ol>
+<li><code>target</code>: versioni del JS in output;</li>
+<li><code>strict: true</code>: abilita controlli rigorosi</li>
+<li><code>moduleResolution</code>: gestisce import/export</li>
+<li><code>noImplicitAny</code>: impedisce <code>any</code> impliciti</li>
+</ol>
+</div></div>
+</div>
+</div>
+</div>
+</div>
 
 </section>
 </section>
