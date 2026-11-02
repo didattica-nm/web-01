@@ -14,7 +14,8 @@ aliases = [
 # Introduzione al **Web**
 {{% /accentify %}}
 
-## HTML, CSS, JavaScript
+## I web standard: **HTML**, **CSS**, **JavaScript**
+### + **TypeScript**: JavaScript tipizzato
 
 <small>
 
@@ -570,12 +571,11 @@ div {
 ## Priorità delle regole
 {{% multicol %}}
 {{% col %}}
-In ordine **decrescente** di importanza
-1. Media
-2. Importanza di una dichiarazione
-3. Origine della dichiarazione
-4. Specificità del selettore
-5. Ordine delle dichiarazioni
+Dalla più debole alla più forte
+1. User Agent Styles - stili predefiniti del browser
+2. Specificità del selettore (*vedi dopo*)
+3. Stile inline (parte della specificità del selettore)
+4. `!important`
 {{% /col %}}
 
 {{% col %}}
@@ -604,7 +604,9 @@ Ogni selettore CSS ha una **specificità**, i.e. una quadrupla $(x,y,w,z)$, dove
 <br/> 
 
 {{% callout %}}
-A parità di Media, Importanza e Origine, avrà precedenza la regola con specificità **maggiore**!
+
+A parità di **specificità**, vince l'**ultimo**: se due regole hanno identico punteggio $(y, z,w)$, viene applicata la regola dichiarata più in basso nel foglio di stile (o caricata per ultima).
+
 {{% /callout %}}
 
 ---
@@ -705,7 +707,30 @@ nav#menu ul.sec li#st a {
 
 ## Box Model
 
-![](https://hackernoon.com/hn-images/1*wTfLqr-Og1W5LvUCqV7X-Q.jpeg)
+{{% multicol %}}
+{{% col %}}
+![](imgs/boxmodel.png)
+{{% /col %}}
+{{% col %}}
+
+{{% callout type="cite" src="w3schools" srcLink="https://www.w3schools.com/css/css_boxmodel.asp" %}}
+The CSS box model is essentially a box that wraps around every HTML element.
+Every box consists of four parts: **content**, **padding**, **borders** and **margins**.
+{{% /callout %}}
+
+<br>
+
+```css
+div {
+  width: 300px; /* Applicata alla content area! */
+  border: 15px solid green;
+  padding: 50px;
+  margin: 20px;
+}
+```
+
+{{% /col %}}
+{{% /multicol %}}
 
 ---
 
@@ -739,8 +764,8 @@ Impara con le rane: https://flexboxfroggy.com/
 
 - Sviluppato da <i class="bi bi-twitter"></i> Twitter
 - Applicazioni **responsive** e **mobile-first**
-  - **responsive** := il layout degli elementi si aggiusta al ridimensionamento dello schermo
-  - **mobile-first** := il layout degli elementi è pensato in primis per essere visto da telefono
+  - **responsive** := il layout degli elementi si adatta al ridimensionamento dello schermo
+  - **mobile-first** := il layout degli elementi è pensato in primis per essere fruito da telefono
 
 ---
 
@@ -770,7 +795,83 @@ Sorgente: https://w3techs.com/technologies/overview/css_framework
 
 ![alt text](imgs/bootstrap-grid.png)
 
-Spazio divisibile in **12 colonne**, adattabili a seconda della dimensione della **viewport**.
+Spazio divisibile in **12 colonne**, adattabili a seconda della dimensione della **viewport** mediante sistema di **breakpoints**.
+
+---
+
+### Killer feature: **grid system** - un esempio / 1
+
+{{% multicol %}}
+{{% col %}}
+
+#### Codice
+
+```html { linenos=inline }
+<div class="container">
+  <div class="row">
+    <!-- 12 colonne totali: 4 + 8 = 12 -->
+    <div class="col-md-4">Sidebar (4/12)</div>
+    <div class="col-md-8">Contenuto principale (8/12)</div>
+  </div>
+
+  <div class="row mt-3">
+    <!-- Colonne a larghezza automatica 
+    e uguale (3 colonne da 4/12) -->
+    <div class="col">Colonna A</div>
+    <div class="col">Colonna B</div>
+    <div class="col">Colonna C</div>
+  </div>
+</div>
+```
+{{% /col %}}
+{{% col %}}
+
+#### Rendering
+
+- in rosso: `container`
+- in verde: `row`
+- in blu: `col`
+
+![](imgs/bootstrap-grid-ex.png)
+
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+### Killer feature: **grid system** - un esempio / 2
+
+{{% multicol %}}
+{{% col %}}
+
+#### Codice
+
+```html { linenos=inline hl_lines=["3-5"] }
+<div class="container">
+  <div class="row">
+    <!-- 12 colonne totali: 4 + 8 = 12 -->
+    <div class="col-md-4">Sidebar (4/12)</div>
+    <div class="col-md-8">Contenuto principale (8/12)</div>
+  </div>
+
+  <div class="row mt-3">
+    <!-- Colonne a larghezza automatica 
+    e uguale (3 colonne da 4/12) -->
+    <div class="col">Colonna A</div>
+    <div class="col">Colonna B</div>
+    <div class="col">Colonna C</div>
+  </div>
+</div>
+```
+{{% /col %}}
+{{% col %}}
+
+{{% callout title="Come lo leggo?" %}}
+Dalla dimensione della viewport `md` in poi (a cui corrisponde una determinata misura in pixel), suddividi lo spazio in 4 e 8. Prima di `md`, comportamento non specificato - suddivisione automatica.
+{{% /callout %}}
+
+{{% /col %}}
+{{% /multicol %}}
 
 ---
 
@@ -1156,6 +1257,121 @@ console.log(uniqueItems);
 {{% /col %}}
 {{% /multicol %}}
 
+---
+
+### Breve - e doveroso - cenno "**storico**" / 1
+
+È molto facile fare **confusione** tra diversi standard / concetti base / versioni di JavaScript:
+
+<br>
+
+{{% multicol %}}
+
+{{% col %}}
+
+#### ECMAScript (ES)
+
+**Standard JavaScript** (modello teorico)
+- grammatica e regolamento formale del linguaggio
+- redatto da comitato tecnico TC39 dell'organizzazione ECMA International
+
+{{% /col %}}
+
+{{% col %}}
+
+#### **JavaScript (JS)**
+
+**Implementazione** della specifica teorica nei vari **browser**.
+
+{{% /col %}}
+
+{{% /multicol %}}
+
+---
+
+### Breve - e doveroso - cenno "**storico**" / 2
+
+Quando nel 2009 è nato **Node.js** per eseguire JS fuori dal browser, gli sviluppatori avevano bisogno urgente di un sistema a **moduli** per **gestire progetti complessi**.
+
+<br>
+
+{{% multicol %}}
+{{% col %}}
+
+#### **CommonJS** (CJS)
+
+Prima gestione dei **moduli** (librerie esterne) teorizzata dalla *community* e adottata da NodeJS.
+
+```js
+// Sintassi CommonJS (CJS)
+
+// IMPORTAZIONE MODULI (inizio file)
+const express = require('express');
+
+// ESPORTAZIONE MODULI (fine file)
+module.exports = { miaFunzione };
+```
+
+{{% /col %}}
+
+{{% col %}}
+
+{{% callout type="tip" %}}
+#### ECMAScript <br> **ESModules** (ESM)
+
+Nel 2015, con ES6, il comitato ECMAScript ha finalmente introdotto un sistema di moduli ufficiale e nativo.
+
+```js
+// Sintassi ES Modules (ESM)
+
+// IMPORTAZIONE MODULI (inizio file)
+import express from 'express';
+
+// ESPORTAZIONE MODULI (fine file)
+export { miaFunzione };
+```
+{{% /callout %}}
+
+{{% /col %}}
+{{% /multicol %}}
+
+---
+
+### Breve - e doveroso - cenno "**storico**" / 3
+
+#### Versionamento
+
+{{% multicol %}}
+{{% col %}}
+##### **Prima** del 2015 (*ES1-ES6*)
+- Una release ogni tot anni, accumulando feature per ogni rilascio
+- Nomenclatura con progressivo
+  - ES1
+  - ES2
+  - ES3
+  - *ES4 - non presente*
+  - ES5
+  - **ES6** - la più importante
+    - arrow functions
+    - `let`/`const`
+    - classi
+    - moduli nativi
+{{% /col %}}
+{{% col %}}
+##### **Dopo** il 2015 (*ES2015+*)
+
+- **Ciclo annuale** e **continuo** di rilascio
+- Da qui, il nome contiene l'anno solare di approvazione della versione
+  - ES2015
+  - ES2016
+  - ES2017 (con `async`/`await`!)
+  - ES2018, 19, 20...
+- nuova release ogni giugno di ogni anno!
+
+{{% /col %}}
+{{% /multicol %}}
+
+
 {{% /section %}}
 
 ---
@@ -1171,6 +1387,8 @@ console.log(uniqueItems);
 
 ### I **problemi** di **JavaScript**
 
+{{% multicol %}}
+{{% col %}}
 - Tipizzazione **debole** e **dinamica**
   - molti errori vengono scoperti solo a *run-time* (programma in esecuzione)
 - Comportamenti **imprevedibili**
@@ -1180,6 +1398,11 @@ console.log(uniqueItems);
   - progetti medio/grandi difficilmente manutenibili e scalabili
 - Mancanza di autocompletamento
   - assenza di **IntelliSense**
+{{% /col %}}
+{{% col %}}
+![](imgs/js-hell.png)
+{{% /col %}}
+{{% /multicol %}}
 
 ---
 
